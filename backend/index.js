@@ -1,10 +1,18 @@
- const express=require("express");
-const { createTodo, updateTodo } = require("./types");
-const { todo } = require("./db");
- const app=express();
+   const express=require("express");
+   const { createTodo, updateTodo } = require("./types");
+   const { todo } = require("./db");
+   const cors=require("cors");
+   const app=express();
 
- app.use(express.json());
+    app.use(cors());
 
+   //  This is when we want a specific frontend to hit this backend
+   //  app.use(cors({
+   //    origin:"https://localhost:5173"
+   //  }));
+
+   app.use(express.json());
+  
  app.post("/todo",async function(req,res){
     const createPayload=req.body;
     const parsePayload=createTodo.safeParse(createPayload);
@@ -17,7 +25,7 @@ const { todo } = require("./db");
     //put it in mongoDB
     todo.create({
       title:createPayload.title,
-      desciption:createPayload.desciption,
+      description:createPayload.description,
       completed:false 
     })
 
@@ -44,7 +52,7 @@ const { todo } = require("./db");
       })
       return;
    }
-   await todo.update({
+   await todo.updateOne({
       _id:req.body.id,
    },{
       completed:true
